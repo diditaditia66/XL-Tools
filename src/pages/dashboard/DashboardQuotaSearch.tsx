@@ -12,6 +12,10 @@ type StoreItem = {
   source: "STORE" | "FAMILY";
 };
 
+// keys untuk localStorage
+const LS_FAMILY_CODES_KEY = "quotaSearch.familyCodes";
+const LS_FAMILY_ITEMS_KEY = "quotaSearch.familyItems";
+
 export function DashboardQuotaSearch() {
   const [allPkgs, setAllPkgs] = useState<StoreItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -21,7 +25,7 @@ export function DashboardQuotaSearch() {
   const [famCode, setFamCode] = useState("");
   const [loadedFamilies, setLoadedFamilies] = useState<string[]>([]);
 
-  // ---- Load awal dari XL Store (/store/packages) ----
+  // ---- Load awal dari XL Store (/store/packages) + data persist FAMILY ----
   useEffect(() => {
     const load = async () => {
       setLoading(true);
@@ -33,7 +37,7 @@ export function DashboardQuotaSearch() {
           res?.data?.results ||
           [];
 
-        const list: StoreItem[] = (raw as any[]).map((p: any) => {
+        const baseList: StoreItem[] = (raw as any[]).map((p: any) => {
           const original = p.original_price || 0;
           const disc = p.discounted_price || 0;
           const price = disc > 0 ? disc : original;
@@ -49,9 +53,31 @@ export function DashboardQuotaSearch() {
           };
         });
 
-        setAllPkgs(list);
+        // --- LOAD DATA FAMILY DARI localStorage ---
+        let persistedFamilies: string[] = [];
+        let persistedItems: StoreItem[] = [];
+        try {
+          const famJson = localStorage.getItem(LS_FAMILY_CODES_KEY);
+          const itemsJson = localStorage.getItem(LS_FAMILY_ITEMS_KEY);
+          if (famJson) {
+            persistedFamilies = JSON.parse(famJson);
+          }
+          if (itemsJson) {
+            const arr = JSON.parse(itemsJson) as any[];
+            persistedItems = arr.map((x) => ({
+              ...x,
+              source: "FAMILY" as const,
+            }));
+          }
+        } catch {
+          // kalau parsing gagal, abaikan saja
+        }
+
+        setLoadedFamilies(persistedFamilies);
+        setAllPkgs([...baseList, ...persistedItems]);
       } catch (e: any) {
         alert(e.message);
+        setAllPkgs([]);
       }
       setLoading(false);
     };
@@ -82,11 +108,27 @@ export function DashboardQuotaSearch() {
         source: "FAMILY",
       }));
 
-      setAllPkgs((prev) => [...prev, ...items]);
-      setLoadedFamilies((prev) => [
-        ...prev,
-        res.family_code || code,
-      ]);
+      // update allPkgs + simpan hanya item FAMILY ke localStorage
+      setAllPkgs((prev) => {
+        const next = [...prev, ...items];
+        const familyOnly = next.filter((x) => x.source === "FAMILY");
+        localStorage.setItem(
+          LS_FAMILY_ITEMS_KEY,
+          JSON.stringify(familyOnly),
+        );
+        return next;
+      });
+
+      // update daftar family yang sudah dimuat + simpan ke localStorage
+      setLoadedFamilies((prev) => {
+        const nextCodes = [...prev, res.family_code || code];
+        localStorage.setItem(
+          LS_FAMILY_CODES_KEY,
+          JSON.stringify(nextCodes),
+        );
+        return nextCodes;
+      });
+
       alert(`Berhasil menambahkan ${items.length} paket dari ${code}.`);
     } catch (e: any) {
       alert(e.message);
