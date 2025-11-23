@@ -1,3 +1,4 @@
+// src/pages/LoginPage.tsx
 import { useState } from "react";
 import { requestOtp, submitOtp } from "../api/client";
 import type { ActiveUser } from "../api/client";
@@ -50,6 +51,7 @@ export function LoginPage({ onLoggedIn }: LoginPageProps) {
     try {
       const res = await submitOtp(msisdn, otp);
       setMessage("Login berhasil.");
+      // API server mengembalikan { success, active_user: {...} }
       onLoggedIn(res.active_user);
     } catch (e: any) {
       setError(e.message || "Gagal verifikasi OTP");
@@ -63,8 +65,7 @@ export function LoginPage({ onLoggedIn }: LoginPageProps) {
       <div className="page-panel">
         <h2>Masuk dengan OTP</h2>
         <p className="page-description">
-          Masukkan nomor XL kamu untuk menerima kode OTP, lalu verifikasi untuk
-          mengakses dashboard.
+          Masukkan nomor XL kamu untuk menerima kode OTP.
         </p>
 
         <div className="form-grid">
@@ -105,7 +106,10 @@ export function LoginPage({ onLoggedIn }: LoginPageProps) {
             </button>
           ) : (
             <>
-              <button onClick={handleSubmitOtp} disabled={loading || !otp}>
+              <button
+                onClick={handleSubmitOtp}
+                disabled={loading || !otp.trim()}
+              >
                 {loading ? "Verifikasi..." : "Verifikasi OTP"}
               </button>
               <button
@@ -127,23 +131,7 @@ export function LoginPage({ onLoggedIn }: LoginPageProps) {
 
         {message && <p className="message success">{message}</p>}
         {error && <p className="message error">{error}</p>}
-
-        <div className="helper-text">
-          <p>
-            Data yang ditampilkan hanya berasal dari akun XL kamu sendiri. Jangan
-            gunakan untuk nomor orang lain tanpa izin.
-          </p>
-        </div>
       </div>
-
-      <aside className="page-side">
-        <h3>Catatan keamanan</h3>
-        <ul>
-          <li>Aplikasi ini tidak resmi dari XL Axiata.</li>
-          <li>Gunakan hanya untuk monitoring penggunaan pribadi.</li>
-          <li>Jangan membagikan akses dashboard ke orang lain.</li>
-        </ul>
-      </aside>
     </section>
   );
 }
