@@ -28,7 +28,11 @@ body {
 }
 
 /* Root layout */
-.app { min-height: 100vh; display: flex; flex-direction: column; }
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
 .app-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -52,10 +56,17 @@ body {
   border: 1px solid var(--border-subtle); font-size: 0.85rem; font-family: monospace;
 }
 
-.app-main { flex: 1; display: flex; justify-content: center; padding: 2rem; }
+.app-main {
+  flex: 1;
+  padding: 2rem 2.5rem;     /* boleh sesuaikan padding */
+}
 
 /* --- PAGE LAYOUTS --- */
-.page { width: 100%; max-width: 1200px; margin: 0 auto; }
+.page {
+  width: 100%;
+  margin: 0;                /* biar nempel dari kiri */
+  max-width: none;          /* tidak dibatasi */
+}
 
 /* LOGIN PAGE (Centered) */
 .login-page { 
@@ -74,24 +85,34 @@ body {
 
 /* --- DASHBOARD LAYOUT (Sidebar + Content) --- */
 .dashboard {
-  display: flex; gap: 1.5rem; align-items: flex-start;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  width: 100%;           /* PAKSA isi seluruh .page */
 }
 
 .sidebar {
   flex: 0 0 240px;
-  display: flex; flex-direction: column; gap: 0.5rem;
-  position: sticky; top: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: sticky;
+  top: 90px;
   background: rgba(15, 23, 42, 0.4);
   border: 1px solid var(--border-subtle);
-  padding: 1rem; border-radius: var(--radius-lg);
-  max-height: calc(100vh - 120px); overflow-y: auto;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 }
 
 .content-area {
-  flex: 1;
+  flex: 1 1 0;          /* biar fleksibel */
+  width: 100%;          /* panel kanan bentang penuh */
   background: rgba(15, 23, 42, 0.4);
   border: 1px solid var(--border-subtle);
-  padding: 1.5rem; border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
   min-height: 500px;
 }
 
@@ -635,4 +656,100 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .akrab-raw-details {
   margin-top: 0.8rem;
   font-size: 0.8rem;
+}
+
+/* ================================
+   RESPONSIVE BREAKPOINTS
+   ================================ */
+
+/* Tablet & layar <= 1024px */
+@media (max-width: 1024px) {
+  .app-header {
+    padding: 0.75rem 1.25rem;
+  }
+
+  .app-main {
+    padding: 1.25rem;
+  }
+
+  .page {
+    max-width: 100%;
+  }
+
+  .dashboard {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .sidebar {
+    flex: 0 0 auto;
+    width: 100%;
+    position: static;
+    max-height: none;
+    border-radius: var(--radius-lg);
+  }
+
+  .content-area {
+    width: 100%;
+    min-height: 400px;
+  }
+
+  .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
+/* Mobile <= 640px */
+@media (max-width: 640px) {
+  .app-header {
+    padding: 0.5rem 0.9rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .app-header-right {
+    align-self: stretch;
+    justify-content: space-between;
+  }
+
+  .app-main {
+    padding: 0.75rem;
+  }
+
+  .page-panel {
+    padding: 1.25rem;
+  }
+
+  .sidebar {
+    padding: 0.75rem;
+  }
+
+  .menu-item {
+    padding: 8px 10px;
+  }
+
+  .content-area {
+    padding: 1rem;
+  }
+
+  .card {
+    padding: 0.95rem;
+  }
+
+  .balance-text {
+    font-size: 2rem;
+  }
+
+  input {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+
+  button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
 }

@@ -384,15 +384,26 @@ export async function getCircle(): Promise<any> {
 // ---- NOTIFIKASI (menu N) ----
 
 export async function getNotif(): Promise<any> {
+  // ini sudah benar, ambil list notif dari backend
   return request("/notifications");
 }
 
+// optional: kalau endpoint ini memang ada dan dipakai tempat lain,
+// masih boleh dipertahankan, tapi bukan yang utama untuk logika CLI.
 export async function markAllNotifRead(): Promise<{
   success: boolean;
   updated_ids: string[];
 }> {
   return request("/notifications/read-all", { method: "POST" });
 }
+
+// Wajib: wrapper ke get_notification_detail di backend (CLI memakai ini)
+export async function getNotifDetail(
+  notificationId: string
+): Promise<any> {
+  return request(`/notifications/${notificationId}`);
+}
+
 
 // ---- REGISTER (menu R) ----
 
@@ -431,3 +442,4 @@ export async function searchFamilyQuotas(
     body: JSON.stringify({ family_code: familyCode }),
   });
 }
+
