@@ -137,12 +137,11 @@ export async function getStorePkgs(
   isEnterprise = false
 ): Promise<any> {
   return request<any>(
-    `/store/packages?subs_type=${encodeURIComponent(
+    `/store/packages-with-family?subs_type=${encodeURIComponent(
       subsType
     )}&is_enterprise=${isEnterprise}`
   );
 }
-
 
 export async function getFamilyDetail(
   familyCode: string,

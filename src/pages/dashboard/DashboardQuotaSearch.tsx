@@ -46,6 +46,7 @@ export function DashboardQuotaSearch() {
           return {
             title: p.title,
             family_name: p.family_name,
+            family_code: p.family_code,
             validity: p.validity,
             price,
             option_code: p.action_param, // quota code / package option code
