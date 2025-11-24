@@ -7,7 +7,8 @@ type StoreItem = {
   family_name?: string;
   validity?: string;
   price: number;
-  option_code: string; // quota code / package option code
+  option_code: string;
+  family_code?: string; 
   raw: any;
   source: "STORE" | "FAMILY";
 };
@@ -104,6 +105,7 @@ export function DashboardQuotaSearch() {
         validity: p.validity,
         price: p.price,
         option_code: p.option_code,
+        family_code: p.family_code || res.family_code || code,
         raw: p,
         source: "FAMILY",
       }));
@@ -251,11 +253,24 @@ export function DashboardQuotaSearch() {
                     opacity: 0.8,
                     display: "flex",
                     justifyContent: "space-between",
+                    gap: 8,
                   }}
                 >
                   <span>{p.family_name || "-"}</span>
                   <span>Kode: {p.option_code}</span>
                 </div>
+
+                {p.family_code && (
+                  <div
+                    style={{
+                      fontSize: "0.7rem",
+                      opacity: 0.75,
+                      marginTop: 2,
+                    }}
+                  >
+                    Family code: <code>{p.family_code}</code>
+                  </div>
+                )}
                 <div
                   style={{
                     fontSize: "0.7rem",
@@ -287,6 +302,11 @@ export function DashboardQuotaSearch() {
             Family: {selected.family_name || "-"} · Valid:{" "}
             {selected.validity || "-"}
           </p>
+          {selected.family_code && (
+            <p style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+              Family code: <code>{selected.family_code}</code>
+            </p>
+          )}
           <p style={{ marginTop: 4 }}>
             Kode kuota:{" "}
             <code>{selected.option_code || "(tidak tersedia)"}</code>
